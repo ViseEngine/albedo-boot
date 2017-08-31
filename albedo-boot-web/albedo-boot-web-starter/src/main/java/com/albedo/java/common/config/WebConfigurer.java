@@ -12,9 +12,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+import com.albedo.java.common.security.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -24,6 +26,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -44,6 +48,7 @@ import com.codahale.metrics.servlets.MetricsServlet;
  * Configuration of web application with Servlet 3.0 APIs.
  */
 @Configuration
+@EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 public class WebConfigurer extends WebMvcConfigurerAdapter implements ServletContextInitializer, EmbeddedServletContainerCustomizer {
 
     private final Logger log = LoggerFactory.getLogger(WebConfigurer.class);
@@ -55,6 +60,11 @@ public class WebConfigurer extends WebMvcConfigurerAdapter implements ServletCon
 
     @Autowired(required = false)
     private MetricRegistry metricRegistry;
+
+    @Bean
+    public AuditorAware<String> springSecurityAuditorAware() {
+        return () -> SecurityUtil.getCurrentUserId();
+    }
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
