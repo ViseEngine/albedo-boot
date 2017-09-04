@@ -489,7 +489,7 @@ public final class SecurityUtil {
                         } else if (Role.DATA_SCOPE_ORG_AND_CHILD.equals(r.getDataScope())) {
                             queryConditions.add(QueryCondition.eq(tempOrgId, userOrgId));
                             queryConditions.add(QueryCondition.like(PublicUtil.toAppendStr(oa, isSql ? ".parent_ids" : ".parentIds"),
-                                    PublicUtil.toAppendStr(user.getOrg().getParentIds(), userOrgId, ",%'")));
+                                    PublicUtil.toAppendStr(user.getOrg().getParentIds(), userOrgId, ",%")));
                         } else if (Role.DATA_SCOPE_ORG.equals(r.getDataScope())) {
                             queryConditions.add(QueryCondition.eq(tempOrgId, userOrgId));
                             queryConditions
